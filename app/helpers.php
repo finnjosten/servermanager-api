@@ -118,37 +118,44 @@
     if (! function_exists('vlx_get_uptime')) {
         function vlx_get_uptime($uptime) {
 
-            $days = explode(' ', $uptime)[2];
-            $hours_and_min = explode(' ', $uptime)[4];
+            preg_match('/(\d+)\s+days/', $uptime, $matches);
+            $days = isset($matches[1]) ? trim(explode('days', $matches[1])[0], '') : null;
+            preg_match('/,\s+(\d+):(\d+),/', $uptime, $matches);
+            $hours = isset($matches[1]) ? trim(explode(',', $matches[1])[0], '') : null;
+            $min = isset($matches[2]) ? trim(explode(',', $matches[2])[0], '') : null;
 
-            if (isset($days)) {
+            $uptime = "";
+
+            if (isset($days) && !empty($days)) {
 
                 if ($days == 0) {
-                    $days = '';
+                    $uptime .= '';
                 } else {
-                    $days = $days . 'd';
+                    $uptime .= $days . 'd';
                 }
             }
-            if (isset($hours_and_min)) {
-                $hours_and_min = trim($hours_and_min, ',');
-                $hours = explode(':', $hours_and_min)[0];
-                $min = explode(':', $hours_and_min)[1];
-
+            if (isset($hours) && !empty($hours)) {
                 if ($hours == 0) {
-                    $hours = '';
+                    $uptime .= '';
+                } else if(empty($uptime)) {
+                    $uptime .= $hours . 'h';
                 } else {
-                    $hours = $hours . 'h';
+                    $uptime .= ' ' . $hours . 'h';
                 }
+            }
+            if (isset($min) && !empty($min)) {
 
                 if ($min == 0) {
-                    $min = '';
+                    $uptime .= '';
+                } else if(empty($uptime)) {
+                    $uptime .= $min . 'm';
                 } else {
-                    $min = $min . 'm';
+                    $uptime .= ' ' . $min . 'm';
                 }
 
             }
 
-            return $days . ' ' . $hours . ' ' . $min;
+            return $uptime;
         }
     }
 

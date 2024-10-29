@@ -16,6 +16,13 @@ class NodeController extends Controller
 
         $uptime = vlx_get_uptime($output);
 
+        if (empty($uptime)) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Could not get uptime",
+            ]);
+        }
+
         return response()->json([
             "status" => "success",
             "data" => $uptime,
