@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>GeoProfs API</title>
+        <title>Servermanager API</title>
 
         <style>
 
@@ -18,7 +18,7 @@
         </style>
     </head>
     <body>
-        <h1>GeoProfs API</h1>
+        <h1>Servermanager API</h1>
         <p>This api is now running and can be accessed from <a href="/api">/api</a></p>
     </body>
 </html>

@@ -3,9 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NodeController;
 use App\Http\Controllers\AuthController;
 
 /* Route::get('/user', function (Request $request) {
@@ -20,11 +19,14 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/logout',  [AuthController::class, 'logout']   )->name('logout')->middleware('auth:sanctum');
 });
 
-// Allow creating users without auth when app is in local mode
-if (env('APP_ENV') == 'local') Route::post('users/create',[UserController::class, 'store'])->name('users.create');
-if (env('APP_ENV') != 'local') Route::post('users/create',[UserController::class, 'store'])->name('users.create')->middleware('auth:sanctum');
-Route::get      ('user/',                   [UserController::class, 'showCurrent']  )->name('users.index')->middleware('auth:sanctum');
-Route::get      ('users/',                  [UserController::class, 'index']        )->name('users.index')->middleware('auth:sanctum');
-Route::get      ('users/{id}',              [UserController::class, 'show']         )->name('users.show')->middleware('auth:sanctum');
-Route::post     ('users/{id}/update',       [UserController::class, 'update']       )->name('users.update')->middleware('auth:sanctum');
-Route::delete   ('users/{id}/delete',       [UserController::class, 'destroy']      )->name('users.delete')->middleware('auth:sanctum');
+
+Route::get      ('node/uptime',                 [NodeController::class, 'uptime']   )->name('node.uptime');
+Route::get      ('node/os',                     [NodeController::class, 'os']       )->name('node.os');
+Route::get      ('node/ip',                     [NodeController::class, 'ip']       )->name('node.ip');
+
+
+Route::get      ('users/',                      [UserController::class, 'index']    )->name('users.index');
+Route::get      ('users/{username}',            [UserController::class, 'show']     )->name('users.show');
+Route::get      ('users/store',                 [UserController::class, 'store']    )->name('users.store');
+Route::get      ('users/update/{username}',     [UserController::class, 'update']   )->name('users.update');
+Route::get      ('users/destroy/{username}',    [UserController::class, 'destroy']  )->name('users.destroy');

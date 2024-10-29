@@ -2,206 +2,88 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
-/**
- * @group User management
- * @authenticated
- *
- * APIs for managing users
- */
-class UserController extends Controller {
+class UserController extends Controller
+{
 
-    private $request_fields = array(
-        'email',
-        'password',
-
-        'role_slug',
-        'department_slug',
-        'subdepartment_slug',
-        'supervisor_id',
-
-        'blocked',
-        'verified',
-
-        'first_name',
-        'sure_name',
-        'bsn',
-        'date_of_service',
-
-        'sick_days',
-        'vac_days',
-        'personal_days',
-        'max_vac_days'
-    );
-    private $validator_fields = array(
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|min:8|max:64',
-
-        'role_slug' => 'nullable|string|exists:roles,slug',
-        'department_slug' => 'nullable|string|exists:departments,slug',
-        'subdepartment_slug' => 'nullable|string|exists:subdepartments,slug',
-        'supervisor_id' => 'nullable|integer|exists:users,id',
-
-        'blocked' => 'nullable|boolean',
-        'verified' => 'nullable|boolean',
-
-        'first_name' => 'required|string|max:64',
-        'sure_name' => 'required|string|max:64',
-        'bsn' => 'required|string|max:9|unique:users,bsn',
-        'date_of_service' => 'required|date',
-
-        'sick_days' => 'nullable|integer',
-        'vac_days' => 'nullable|integer',
-        'personal_days' => 'nullable|integer',
-        'max_vac_days' => 'nullable|integer',
-    );
+    protected $default_users = [ 'daemon', 'bin', 'sys', 'sync', 'games', 'man', 'lp', 'mail', 'news', 'uucp', 'proxy', 'www-data', 'backup', 'list', 'irc', 'gnats', 'nobody', 'systemd-network', 'systemd-resolve', 'messagebus', 'systemd-timesync', 'syslog', '_apt', 'tss', 'uuidd', 'tcpdump', 'sshd', 'pollinate', 'landscape', 'fwupd-refresh', 'lxd', 'mysql', 'pterodactyl', ];
 
     /**
-     * Display all the users.
+     * Display a listing of the resource.
      */
-    public function index() {
-        $users = User::all();
-        return response()->json(["data" => $users]);
-    }
+    public function index($filtered = true) {
 
-    /**
-     * Store a newly created user.
-     */
-    public function store(Request $request) {
+        $output = $this->command('cut -d: -f1 /etc/passwd', true);
 
-        $data = $request->only(...$this->request_fields);
+        $users = explode("\n", $output);
 
-        // Define validation rules
-        $validator = Validator::make($data, $this->validator_fields);
+        $filtered_users = array_filter($users, function($user) {
+            return !in_array($user, $this->default_users);
+        });
 
-        // Check if the validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        // Create the user with the validated data
-        $user = User::create([
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-
-            'role_slug' => $data['role_slug'] ?? 1, // Default role ID to 1 if not provided
-            'department_slug' => $data['department_slug'] ?? null,
-            'subdepartment_slug' => $data['subdepartment_slug'] ?? null,
-            'supervisor_id' => $data['supervisor_id'] ?? null,
-
-            'blocked' => $data['blocked'] ?? false,
-            'verified' => $data['verified'] ?? false,
-
-            'first_name' => $data['first_name'],
-            'sure_name' => $data['sure_name'],
-            'bsn' => $data['bsn'],
-            'date_of_service' => $data['date_of_service'],
-
-            'sick_days' => $data['sick_days'] ?? 0,
-            'vac_days' => $data['vac_days'] ?? 0,
-            'personal_days' => $data['personal_days'] ?? 0,
-            'max_vac_days' => $data['max_vac_days'] ?? 366,
-        ]);
-
-
-        // Return a success response
         return response()->json([
-            'message' => 'User registered successfully!',
-            'user' => $user,
+            "status" => "success",
+            "data" => $filtered ? $filtered_users : $users,
         ]);
     }
 
     /**
-     * Display the specified user.
+     * Display the specified resource.
      */
-    public function show($user_id) {
-        return response()->json(["data" => User::whereId($user_id)->first()]);
-    }
+    public function show(string $username) {
 
-    /**
-     * Display the current user.
-     */
-    public function showCurrent(Request $request) {
-        return response()->json(["data" => $request->user()]);
-    }
+        $output = $this->command('cut -d: -f1 /etc/passwd', true);
 
-    /**
-     * Update the specified user.
-     */
-    public function update(Request $request, $user_id) {
+        $users = explode("\n", $output);
 
-        $data = $request->only(...$this->request_fields);
-
-        // Define validation rules
-        $validator = Validator::make($data, $this->validator_fields);
-
-        // Check if the validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
+        if (!in_array($username, $users)) {
             return response()->json([
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        // Create the user with the validated data
-        $user = User::find()->whereId($user_id)->first();
-
-        $user->fill([
-            'email' => $data['email'] ?? $user->email,
-
-            'role_slug' => $data['role_slug'] ?? $user->role_slug,
-            'department_slug' => $data['department_slug'] ?? $user->department_slug,
-            'subdepartment_slug' => $data['subdepartment_slug'] ?? $user->subdepartment_slug,
-            'supervisor_id' => $data['supervisor_id'] ?? $user->supervisor_id,
-
-            'blocked' => $data['blocked'] ?? $user->blocked,
-            'verified' => $data['verified'] ?? $user->verified,
-
-            'first_name' => $data['first_name'] ?? $user->first_name,
-            'sure_name' => $data['sure_name'] ?? $user->sure_name,
-            'bsn' => $data['bsn'] ?? $user->bsn,
-            'date_of_service' => $data['date_of_service'] ?? $user->date_of_service,
-
-            'sick_days' => $data['sick_days'] ?? $user->sick_days,
-            'vac_days' => $data['vac_days'] ?? $user->vac_days,
-            'personal_days' => $data['personal_days'] ?? $user->personal_days,
-            'max_vac_days' => $data['max_vac_days'] ?? $user->max_vac_days,
-        ]);
-
-        $user->save();
-
-        // Return a success response
-        return response()->json([
-            'message' => 'User updated successfully!',
-            'user' => $user,
-        ]);
-    }
-
-    /**
-     * Remove the specified user.
-     */
-    public function destroy($user_id) {
-
-        $user = User::whereId($user_id)->first();
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found!',
+            "status" => "error",
+            "message" => "User not found",
             ], 404);
         }
 
-        $user->tokens()->delete();
-        $user->delete();
+        $user = [
+            "user_id" => $this->command("id -u " . $username, true),
+            "username" => $username,
+            "group_id" => $this->command("id -g " . $username, true),
+            "groups" => array_slice(explode(" ", $this->command("groups " . $username, true)), 2),
+            "home" => $this->command("grep $username /etc/passwd | cut -d: -f6", true),
+            "shell" => $this->command("grep $username /etc/passwd | cut -d: -f7", true),
+            "last_login" => $this->command("last -n 1 -R $username | head -n 1 | awk '{print $3, $4, $5, $6, $7}'", true),
+            "ssh_keys" => explode("\n", $username == "root" ? $this->command("cat /$username/.ssh/authorized_keys", true, "root") : $this->command("cat /home/$username/.ssh/authorized_keys", true, "root")),
+        ];
+
 
         return response()->json([
-            'message' => 'User deleted successfully!',
+            "status" => "success",
+            "data" => $user,
         ]);
 
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
     }
 }
