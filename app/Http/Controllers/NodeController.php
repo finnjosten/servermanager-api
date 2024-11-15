@@ -2,27 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use app\Http\Controllers\HardwareController;
 use Illuminate\Http\Request;
 
 class NodeController extends Controller
 {
 
     /**
+     * Return everything
+     */
+    public function all() {
+
+        $hardware = app('App\Http\Controllers\HardwareController');
+
+        $uptime = $this->uptime(true);
+        $os = $this->os(true);
+
+        $cpu = $hardware->cpu(true);
+        $memory = $hardware->memory(true);
+        $disk = $hardware->disk(true);
+        $network = $hardware->network(true);
+
+        return response()->json([
+            "status" => "success",
+            "data" => [
+                "uptime" => $uptime,
+                "os" => $os,
+                "hardware" => [
+                    "cpu" => $cpu,
+                    "memory" => $memory,
+                    "disk" => $disk,
+                    "network" => $network,
+                ],
+            ],
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
      * Return the uptime
      */
-    public function uptime($filtered = true) {
+    public function uptime($data_only = false) {
 
         $output = $this->command('uptime', true);
 
         $uptime = vlx_get_uptime($output);
 
-        if (empty($uptime)) {
-            return response()->json([
-                "status" => "error",
-                "message" => "Could not get uptime",
-            ]);
+        if ($data_only) {
+            return $uptime;
         }
-
         return response()->json([
             "status" => "success",
             "data" => $uptime,
@@ -32,7 +71,7 @@ class NodeController extends Controller
     /**
      * Return the OS
      */
-    public function os($filtered = true) {
+    public function os($data_only = false) {
 
         $output = $this->command('uname -a', true);
 
@@ -55,6 +94,9 @@ class NodeController extends Controller
             $os = $output;
         }
 
+        if ($data_only) {
+            return $os;
+        }
         return response()->json([
             "status" => "success",
             "data" => $os,
