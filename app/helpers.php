@@ -124,6 +124,13 @@
             $hours = isset($matches[1]) ? trim(explode(',', $matches[1])[0], '') : null;
             $min = isset($matches[2]) ? trim(explode(',', $matches[2])[0], '') : null;
 
+            if (empty($hours) && empty($min)) {
+                preg_match('/(\d+):(\d+),/', $uptime, $matches);
+                $hours = isset($matches[1]) ? trim(explode(':', $matches[1])[0], '') : null;
+                $min = isset($matches[2]) ? trim(explode(',', $matches[2])[0], '') : null;
+            }
+
+
             $uptime = "";
 
             if (isset($days) && !empty($days)) {
