@@ -17,8 +17,8 @@ class UsageController extends Controller
         $startTime = microtime(true);
 
         $cpu_usage = $this->cpu_usage(null, true);
-
         $ram_usage = $this->ram_usage(true);
+        $disk_usage = $this->disk_usage(true);
 
         $endTime = microtime(true);
 
@@ -28,6 +28,7 @@ class UsageController extends Controller
                 "cpu" => $cpu_usage['cpu'],
                 "cores" => $cpu_usage['cores'],
                 "ram" => $ram_usage,
+                "disks" => $disk_usage,
                 "execution_time" => ($endTime - $startTime) * 1000 . "ms", // execution time in milliseconds
             ],
         ]);
@@ -99,6 +100,34 @@ class UsageController extends Controller
         return response()->json([
             "status" => "success",
             "data" => $usage,
+        ]);
+    }
+
+
+    /**
+     * Disk Usage
+     */
+    public function disk_usage($data_only = false) {
+        $disks = [];
+        $df_output = $this->command("df -BG --output=source,size,used,pcent", true);
+        $lines = explode("\n", $df_output);
+        foreach ($lines as $line) {
+            if (preg_match('/^\/dev\/\S+\s+(\d+)G\s+(\d+)G\s+(\d+)%$/', $line, $matches)) {
+            $disks[] = [
+                "device" => str_replace("/dev/","",explode("           ", $matches[0])[0]),
+                "size_gb" => (int)$matches[1],
+                "used_gb" => (int)$matches[2],
+                "percentage" => (int)$matches[3],
+            ];
+            }
+        }
+
+        if ($data_only) {
+            return $disks;
+        }
+        return response()->json([
+            "status" => "success",
+            "data" => $disks,
         ]);
     }
 
