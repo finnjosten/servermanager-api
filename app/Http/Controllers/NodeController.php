@@ -9,7 +9,7 @@ class NodeController extends Controller
 {
 
     /**
-     * Return everything
+     * All node info (not usage as its meant to be called differently)
      */
     public function all() {
 
@@ -51,7 +51,7 @@ class NodeController extends Controller
 
 
     /**
-     * Return the uptime
+     * Node uptime
      */
     public function uptime($data_only = false) {
 
@@ -69,7 +69,7 @@ class NodeController extends Controller
     }
 
     /**
-     * Return the OS
+     * Node OS
      */
     public function os($data_only = false) {
 
@@ -105,7 +105,7 @@ class NodeController extends Controller
 
 
     /**
-     * Return the IP
+     * Node IPv4
      */
     public function ip() {
 

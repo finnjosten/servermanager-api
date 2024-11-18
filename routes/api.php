@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\HardwareController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UsageController;
 
 /* Route::get('/user', function (Request $request) {
     return $request->user();
@@ -27,11 +28,14 @@ Route::get('node/uptime',                   [NodeController::class, 'uptime']   
 Route::get('node/os',                       [NodeController::class, 'os']       )->name('node.os');
 Route::get('node/ip',                       [NodeController::class, 'ip']       )->name('node.ip');
 
-Route::get('node/hardware/cpu',             [HardwareController::class, 'cpu']      )->name('node.cpu');
-Route::get('node/hardware/memory',          [HardwareController::class, 'memory']   )->name('node.memory');
-Route::get('node/hardware/disk',            [HardwareController::class, 'disk']     )->name('node.disk');
-Route::get('node/hardware/network',         [HardwareController::class, 'network']  )->name('node.network');
+Route::get('node/hardware/cpu',             [HardwareController::class, 'cpu']      )->name('node.hardware.cpu');
+Route::get('node/hardware/memory',          [HardwareController::class, 'memory']   )->name('node.hardware.memory');
+Route::get('node/hardware/disk',            [HardwareController::class, 'disk']     )->name('node.hardware.disk');
+Route::get('node/hardware/network',         [HardwareController::class, 'network']  )->name('node.hardware.network');
 
+Route::get('node/usage/',                   [UsageController::class, 'get_usage']    )->name('node.usage');
+Route::get('node/usage/cpu',                [UsageController::class, 'cpu_usage']    )->name('node.usage.cpu');
+Route::get('node/usage/core/{core}',        [UsageController::class, 'core_usage']   )->name('node.usage.core');
 
 Route::get('users/',                        [UserController::class, 'index']    )->name('users.index');
 Route::get('users/{username}',              [UserController::class, 'show']     )->name('users.show');

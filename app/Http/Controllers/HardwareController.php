@@ -22,7 +22,7 @@ class HardwareController extends Controller
     }
 
     /**
-     * Return cpu info
+     * CPU info
      */
     public function cpu($data_only = false) {
 
@@ -47,7 +47,7 @@ class HardwareController extends Controller
     }
 
     /**
-     * Return memory info
+     * Memory info
      */
     public function memory($data_only = false) {
 
@@ -73,7 +73,7 @@ class HardwareController extends Controller
     }
 
     /**
-     * Return disk info
+     * Disk info
      */
     public function disk($data_only = false) {
 
@@ -97,7 +97,7 @@ class HardwareController extends Controller
     }
 
     /**
-     * Return the network info
+     * Network info
      */
     public function network($data_only = false) {
 
