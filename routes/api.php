@@ -36,6 +36,9 @@ Route::get('node/hardware/network',         [HardwareController::class, 'network
 Route::get('node/usage/',                   [UsageController::class, 'get_usage']    )->name('node.usage');
 Route::get('node/usage/cpu',                [UsageController::class, 'cpu_usage']    )->name('node.usage.cpu');
 Route::get('node/usage/core/{core}',        [UsageController::class, 'core_usage']   )->name('node.usage.core');
+Route::get('node/usage/ram',                [UsageController::class, 'ram_usage']    )->name('node.usage.ram');
+Route::get('node/usage/disk',               [UsageController::class, 'disk_usage']   )->name('node.usage.disk');
+Route::get('node/usage/network',            [UsageController::class, 'network_usage'])->name('node.usage.network');
 
 Route::get('users/',                        [UserController::class, 'index']    )->name('users.index');
 Route::get('users/{username}',              [UserController::class, 'show']     )->name('users.show');

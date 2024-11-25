@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 class UsageController extends Controller
 {
 
-
-
     /**
      * Get all usage
      */
@@ -19,6 +17,7 @@ class UsageController extends Controller
         $cpu_usage = $this->cpu_usage(null, true);
         $ram_usage = $this->ram_usage(true);
         $disk_usage = $this->disk_usage(true);
+        $network_usage = $this->network_usage(true);
 
         $endTime = microtime(true);
 
@@ -29,6 +28,7 @@ class UsageController extends Controller
                 "cores" => $cpu_usage['cores'],
                 "ram" => $ram_usage,
                 "disks" => $disk_usage,
+                "network" => $network_usage,
                 "execution_time" => ($endTime - $startTime) * 1000 . "ms", // execution time in milliseconds
             ],
         ]);
@@ -130,5 +130,38 @@ class UsageController extends Controller
             "data" => $disks,
         ]);
     }
+
+
+    /**
+     * Network usage
+     */
+    public function network_usage($data_only = false) {
+
+        $network = null;
+
+        if (vlx_get_env_string("DATALIX")) {
+            $network = $this->apiCall("https://backend.datalix.de/v1/service/".vlx_get_env_string("DATALIX_ID")."/traffic?token=" . vlx_get_env_string("DATALIX_TOKEN"));
+        } else {
+            if ($data_only) {
+                return $network;
+            } else {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Datalix API not set",
+                ]);
+            }
+        }
+
+        if ($data_only) {
+            return $network;
+        } else {
+            return response()->json([
+                "status" => "success",
+                "data" => $network,
+            ]);
+        }
+    }
+
+
 
 }

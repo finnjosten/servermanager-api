@@ -166,6 +166,19 @@
         }
     }
 
+    /**
+     * Cast an array to an object
+     */
+    if (! function_exists('vlx_cast_to_object')) {
+        function vlx_cast_to_object($array) {
+            if (is_array($array)) {
+                return (object) array_map(__FUNCTION__, $array);
+            } else {
+                return $array;
+            }
+        }
+    }
+
 
 
 
