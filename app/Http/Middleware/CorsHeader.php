@@ -16,12 +16,20 @@ class CorsHeader
      */
     public function handle(Request $request, Closure $next)
     {
-        $response = $next($request);
+        // Get the origin of the request
+        $allowedOrigins = ['https://servermanager.vacso.cloud']; // Add your frontend domain here
 
-        $response->headers->set('Access-Control-Allow-Origin', '*'); //TODO REPLACE WITH DOMAIN AS THIS IS INSECURE!!!!!
-        $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
-        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token, Origin, Authorization');
+        $origin = $request->headers->get('Origin');
 
-        return $response;
+        // If the request's origin is in the allowed origins list, set the Access-Control-Allow-Origin header
+        if (in_array($origin, $allowedOrigins)) {
+            $response = $next($request);
+            $response->headers->set('Access-Control-Allow-Origin', $origin);
+            $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
+            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token, Origin, Authorization');
+            return $response;
+        }
+
+        return $next($request);
     }
 }
