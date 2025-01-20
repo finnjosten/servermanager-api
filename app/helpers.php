@@ -130,6 +130,13 @@
                 $min = isset($matches[2]) ? trim(explode(',', $matches[2])[0], '') : null;
             }
 
+            // asume that the server has been up for x time where the hours is 0
+            if (empty($hours) && empty($min)) {
+                preg_match('/(\d+)\s+min/', $uptime, $matches);
+                $hours = null;
+                $min = isset($matches[1]) ? trim(explode(':', $matches[1])[0], '') : null;
+            }
+
 
             $uptime = "";
 

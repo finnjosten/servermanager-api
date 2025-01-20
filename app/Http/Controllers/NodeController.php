@@ -13,20 +13,31 @@ class NodeController extends Controller
      */
     public function all() {
 
-        $hardware = app('App\Http\Controllers\HardwareController');
+        $data = [];
 
-        $uptime = $this->uptime(true);
-        $os = $this->os(true);
+        // Check if we have a cache file
+        if (file_exists(storage_path('app/node.json'))) {
+            $file = file_get_contents(storage_path('app/node.json'));
 
-        $cpu = $hardware->cpu(true);
-        $memory = $hardware->memory(true);
-        $disk = $hardware->disk(true);
-        $network = $hardware->network(true);
+            // If the file is older than 1 day, delete it (and redo the request)
+            if (filemtime(storage_path('app/node.json')) < strtotime('-1 day')) {
+                unlink(storage_path('app/node.json'));
+                return $this->all();
+            }
+            $data = json_decode($file, true);
+        } else {
 
-        return response()->json([
-            "status" => "success",
-            "data" => [
-                "uptime" => $uptime,
+            $hardware = app('App\Http\Controllers\HardwareController');
+
+            $os = $this->os(true);
+
+            $cpu = $hardware->cpu(true);
+            $memory = $hardware->memory(true);
+            $disk = $hardware->disk(true);
+            $network = $hardware->network(true);
+
+
+            $data = [
                 "os" => $os,
                 "hardware" => [
                     "cpu" => $cpu,
@@ -34,7 +45,24 @@ class NodeController extends Controller
                     "disk" => $disk,
                     "network" => $network,
                 ],
-            ],
+            ];
+
+            // Save a cache file
+            $json_data = json_encode($data, JSON_PRETTY_PRINT);
+            file_put_contents(storage_path('app/node.json'), $json_data);
+        }
+
+        $uptime = $this->uptime(true);
+
+        $webapp = app('App\Http\Controllers\WebappController');
+        $projects = $webapp->index(true);
+
+        $data['uptime'] = $uptime;
+        $data['webapps'] = $projects;
+
+        return response()->json([
+            "status" => "success",
+            "data" => $data,
         ]);
     }
 
