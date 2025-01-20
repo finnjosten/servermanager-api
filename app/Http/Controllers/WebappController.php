@@ -33,24 +33,31 @@ class WebappController extends Controller
             // Check if it's a Laravel project
             if (file_exists($folder . '/artisan')) {
                 $project["type"] = "laravel";
+                $projects[] = $project;
+                continue;
             }
 
             // Check if it's a WordPress project
             if (file_exists($folder . '/wp-config.php')) {
                 $project["type"] = "wordpress";
+                $projects[] = $project;
+                continue;
             }
 
             // Check if it's a React project
             if (file_exists($folder . '/package.json')) {
                 $project["type"] = "react";
+                $projects[] = $project;
+                continue;
             }
 
             // Check if it's a static HTML project
             if (file_exists($folder . '/index.html') || file_exists($folder . '/index.htm')) {
                 $project["type"] = "html";
+                $projects[] = $project;
+                continue;
             }
 
-            $projects[] = $project;
         }
 
         if ($data_only) {
