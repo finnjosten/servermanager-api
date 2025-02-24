@@ -15,6 +15,12 @@ class TokenControl
      */
     public function handle(Request $request, Closure $next): Response {
 
+        // If the request is to the health endpoint or home page, let it pass
+
+        if ($request->path() === 'up' || $request->path() === '/') {
+            return $next($request);
+        }
+
         // check if request has bearer token
         if (!$request->bearerToken()) {
             return response()->json([

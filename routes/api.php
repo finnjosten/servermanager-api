@@ -15,9 +15,6 @@ use App\Http\Controllers\WebappController;
     return $request->user();
 })->middleware('auth:sanctum'); */
 
-
-Route::get('/', function () { abort(404); });
-
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login',   [AuthController::class, 'login']    )->name('login');
     Route::post('/logout',  [AuthController::class, 'logout']   )->name('logout')->middleware('auth:sanctum');

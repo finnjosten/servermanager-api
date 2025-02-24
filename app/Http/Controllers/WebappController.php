@@ -68,8 +68,7 @@ class WebappController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //
     }
 
@@ -83,22 +82,22 @@ class WebappController extends Controller
             $project = null;
         } else {
             $project = [
-            "name" => basename($folder),
-            "type" => "plain",
+                "name" => basename($folder),
+                "type" => "plain",
             ];
 
             if (file_exists($folder . '/artisan')) {
-            // Check if it's a Laravel project
-            $project["type"] = "laravel";
+                // Check if it's a Laravel project
+                $project["type"] = "laravel";
             } else if (file_exists($folder . '/wp-config.php')) {
-            // Check if it's a WordPress project
-            $project["type"] = "wordpress";
+                // Check if it's a WordPress project
+                $project["type"] = "wordpress";
             } else if (file_exists($folder . '/package.json')) {
-            // Check if it's a React project
-            $project["type"] = "react";
+                // Check if it's a React project
+                $project["type"] = "react";
             } else if (file_exists($folder . '/index.html') || file_exists($folder . '/index.htm')) {
-            // Check if it's a static HTML project
-            $project["type"] = "html";
+                // Check if it's a static HTML project
+                $project["type"] = "html";
             }
 
             if (file_exists($folder . '/meta.json')) {
