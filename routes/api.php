@@ -9,6 +9,7 @@ use App\Http\Controllers\HardwareController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsageController;
 use App\Http\Controllers\NetworkController;
+use App\Http\Controllers\WebappController;
 
 /* Route::get('/user', function (Request $request) {
     return $request->user();
@@ -51,3 +52,7 @@ Route::post('network/store',                [NetworkController::class, 'store'] 
 Route::get( 'network/{port}',               [NetworkController::class, 'show']      )->name('network.show')->where('port', '[0-9]+');
 Route::get( 'network/locked',               [NetworkController::class, 'showLocked'])->name('network.blocked');
 Route::post('network/{port}/destory',       [NetworkController::class, 'destroy']   )->name('network.destroy')->where('port', '[0-9]+');
+
+Route::get( 'webapp/',                      [WebappController::class, 'index']      )->name('webapp.index');
+Route::get( 'webapp/{project_name}',        [WebappController::class, 'show']       )->name('webapp.show');
+Route::post('webapp/create',                [WebappController::class, 'create']     )->name('webapp.create');

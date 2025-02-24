@@ -18,7 +18,7 @@ class WebappController extends Controller
 
         $projects = [];
 
-        foreach ($folders as $folder) {
+        foreach ($folders as $i => $folder) {
 
             // if folder starts with __ ignore it
             if (str_starts_with(basename($folder), '__')) {
@@ -30,8 +30,8 @@ class WebappController extends Controller
                 "type" => "plain",
             ];
 
-            // Check if it's a Laravel project
             if (file_exists($folder . '/artisan')) {
+                // Check if it's a Laravel project
                 $project["type"] = "laravel";
             } else if (file_exists($folder . '/wp-config.php')) {
                 // Check if it's a WordPress project
@@ -43,6 +43,14 @@ class WebappController extends Controller
                 // Check if it's a static HTML project
                 $project["type"] = "html";
             }
+
+            if (file_exists($folder . '/meta.json')) {
+                $meta = json_decode(file_get_contents($folder . '/meta.json'), true);
+                $project["meta"] = $meta;
+            }
+
+            $project['id'] = $i;
+            $project['location'] = $folder;
 
             $projects[] = $project;
             continue;
@@ -68,9 +76,51 @@ class WebappController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
+    public function show($project_name) {
+        $folder = '/var/www/vhost/' . $project_name;
+
+        if (!is_dir($folder)) {
+            $project = null;
+        } else {
+            $project = [
+            "name" => basename($folder),
+            "type" => "plain",
+            ];
+
+            if (file_exists($folder . '/artisan')) {
+            // Check if it's a Laravel project
+            $project["type"] = "laravel";
+            } else if (file_exists($folder . '/wp-config.php')) {
+            // Check if it's a WordPress project
+            $project["type"] = "wordpress";
+            } else if (file_exists($folder . '/package.json')) {
+            // Check if it's a React project
+            $project["type"] = "react";
+            } else if (file_exists($folder . '/index.html') || file_exists($folder . '/index.htm')) {
+            // Check if it's a static HTML project
+            $project["type"] = "html";
+            }
+
+            if (file_exists($folder . '/meta.json')) {
+            $meta = json_decode(file_get_contents($folder . '/meta.json'), true);
+            $project["meta"] = $meta;
+            }
+
+            $project['id'] = 0;
+            $project['location'] = $folder;
+        }
+
+        if ($project == null) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Project not found",
+            ], 404);
+        }
+
+        return response()->json([
+            "status" => "success",
+            "data" => $project,
+        ]);
     }
 
     /**
