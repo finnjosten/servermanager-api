@@ -102,8 +102,10 @@ class WebappController extends Controller
             }
 
             if (file_exists($folder . '/meta.json')) {
-            $meta = json_decode(file_get_contents($folder . '/meta.json'), true);
-            $project["meta"] = $meta;
+                $meta = json_decode(file_get_contents($folder . '/meta.json'), true);
+                $project["meta"] = $meta;
+            } else {
+                $project["meta"] = [];
             }
 
             $project['id'] = 0;
