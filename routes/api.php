@@ -51,5 +51,7 @@ Route::get( 'network/locked',               [NetworkController::class, 'showLock
 Route::post('network/{port}/destory',       [NetworkController::class, 'destroy']   )->name('network.destroy')->where('port', '[0-9]+');
 
 Route::get( 'webapp/',                      [WebappController::class, 'index']      )->name('webapp.index');
+Route::post('webapp/store',                 [WebappController::class, 'create']     )->name('webapp.store');
 Route::get( 'webapp/{project_name}',        [WebappController::class, 'show']       )->name('webapp.show');
-Route::post('webapp/create',                [WebappController::class, 'create']     )->name('webapp.create');
+Route::post('webapp/{project_name}/update', [WebappController::class, 'update']     )->name('webapp.update');
+Route::post('webapp/{project_name}/destroy',[WebappController::class, 'destroy']    )->name('webapp.destroy');

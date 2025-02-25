@@ -69,7 +69,7 @@ class WebappController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
-        //
+
     }
 
     /**
@@ -127,9 +127,57 @@ class WebappController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(Request $request, string $id) {
+        /* return response()->json([
+            "status" => "error",
+            "message" => "Not implemented",
+            "data" => $request->all(),
+        ], 501); */
+
+        if (!is_dir('/var/www/vhost/' . $id)) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Project not found",
+            ], 404);
+        }
+
+        if (empty($id)) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Project folder name (id) is required",
+            ], 400);
+        }
+
+        try {
+            $data = $request->all();
+            $folder = '/var/www/vhost/' . $id;
+
+            if (file_exists($folder . '/meta.json')) {
+                $meta = json_decode(file_get_contents($folder . '/meta.json'), true);
+            } else {
+                $meta = [];
+            }
+
+            $meta['project_name']   = $data['project_name'];
+            $meta['public_address'] = $data['public_address'];
+            $meta['description']    = $data['description'];
+            $meta['created_at']     = $data['created_at'];
+            $meta['repository_url'] = $data['repository_url'];
+            $meta['environment']    = $data['environment'];
+            $meta['notes']          = $data['notes'];
+
+            file_put_contents($folder . '/meta.json', json_encode($meta, JSON_PRETTY_PRINT));
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Error updating project",
+            ], 500);
+        }
+
+        return response()->json([
+            "status" => "success",
+            "message" => "Project updated",
+        ]);
     }
 
     /**
