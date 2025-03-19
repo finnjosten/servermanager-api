@@ -10,6 +10,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsageController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\WebappController;
+use App\Http\Controllers\Webserver;
+use App\Http\Controllers\WebserverController;
 
 /* Route::get('/user', function (Request $request) {
     return $request->user();
@@ -49,6 +51,15 @@ Route::post('network/store',                [NetworkController::class, 'store'] 
 Route::get( 'network/{port}',               [NetworkController::class, 'show']      )->name('network.show')->where('port', '[0-9]+');
 Route::get( 'network/locked',               [NetworkController::class, 'showLocked'])->name('network.blocked');
 Route::post('network/{port}/destory',       [NetworkController::class, 'destroy']   )->name('network.destroy')->where('port', '[0-9]+');
+
+Route::get( 'webserver',                        [WebserverController::class, 'index']   )->name('webserver.index');
+Route::post('webserver/store',                  [WebserverController::class, 'store']   )->name('webserver.store');
+Route::get( 'webserver/{file_name}',            [WebserverController::class, 'show']    )->name('webserver.show')->where('file_name', '^(?!store$)[a-zA-Z0-9-_.]+$');
+Route::post('webserver/{file_name}/update',     [WebserverController::class, 'update']  )->name('webserver.update');
+Route::post('webserver/{file_name}/destroy',    [WebserverController::class, 'destroy'] )->name('webserver.destroy');
+Route::post('webserver/{file_name}/certbot',    [WebserverController::class, 'certbot'] )->name('webserver.certbot');
+Route::post('webserver/{file_name}/enable',     [WebserverController::class, 'enable']  )->name('webserver.enable');
+Route::post('webserver/{file_name}/disable',    [WebserverController::class, 'disable'] )->name('webserver.disable');
 
 Route::get( 'webapp/',                      [WebappController::class, 'index']      )->name('webapp.index');
 Route::post('webapp/store',                 [WebappController::class, 'store']      )->name('webapp.store');

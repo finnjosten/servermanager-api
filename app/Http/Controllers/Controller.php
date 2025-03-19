@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Process;
 
+use function Illuminate\Log\log;
+
 abstract class Controller {
     public function command($command, $sudo = false, $user = 'servermanager') {
 
         if ($sudo) {
-            $command = "sudo -u $user $command";
+            $command = "sudo $command";
         }
-        $output = Process::run("$command");
+        $output = Process::run("$command", null);
 
-
-        return trim($output->successful() ? $output->output() : $output->errorOutput());
+        return $output->output();
     }
 
     public function apiCall($endpoint) {
