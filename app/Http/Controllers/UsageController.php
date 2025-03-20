@@ -94,6 +94,8 @@ class UsageController extends Controller
 
         $usage = $this->command("free -m | awk 'NR==2{printf \"%.2f\\n\", $3/1024}'", true);
 
+        $usage = trim($usage);
+
         if ($data_only) {
             return $usage;
         }
