@@ -174,7 +174,19 @@ class WebserverController extends Controller
             // test the new config if it fails revert to the backup
             $output = $this->command("nginx -t", true);
 
-            if (!str_contains($output, '[emerg]')) {
+            if (str_contains($output, '[warn]') && !str_contains($output, '[emerg]')) {
+                $this->command("systemctl reload nginx", true);
+
+                // get the message from nginx return between [warn] and the new line
+                $warning = explode('[warn]', $output)[1];
+                $warning = explode("\n", $warning)[0];
+
+                return response()->json([
+                    "status" => "warning",
+                    "message" => "Nginx test returned a warning, but the config was created",
+                    "warning" => trim($warning),
+                ]);
+            } else if (!str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
             } else {
                 $this->command("rm $file", true);
@@ -308,7 +320,20 @@ class WebserverController extends Controller
             // test the new config if it fails revert to the backup
             $output = $this->command("nginx -t", true);
 
-            if (!str_contains($output, '[emerg]')) {
+            if (str_contains($output, '[warn]') && !str_contains($output, '[emerg]')) {
+                $this->command("systemctl reload nginx", true);
+                $this->command("rm $file.bak", true);
+
+                // get the message from nginx return between [warn] and the new line
+                $warning = explode('[warn]', $output)[1];
+                $warning = explode("\n", $warning)[0];
+
+                return response()->json([
+                    "status" => "warning",
+                    "message" => "Nginx test returned a warning, but the config was created",
+                    "warning" => trim($warning),
+                ]);
+            } else if (!str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
                 $this->command("rm $file.bak", true);
             } else {
@@ -316,7 +341,7 @@ class WebserverController extends Controller
 
                 return response()->json([
                     "status" => "error",
-                    "message" => "Failed to update config"
+                    "message" => "Nginx test failed"
                 ]);
             }
 
@@ -368,9 +393,20 @@ class WebserverController extends Controller
             // test the new config if it fails revert to the backup
             $output = $this->command("nginx -t", true);
 
-            if (!str_contains($output, '[emerg]')) {
+            if (str_contains($output, '[warn]') && !str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
 
+                // get the message from nginx return between [warn] and the new line
+                $warning = explode('[warn]', $output)[1];
+                $warning = explode("\n", $warning)[0];
+
+                return response()->json([
+                    "status" => "warning",
+                    "message" => "Nginx test returned a warning, but the config was created",
+                    "warning" => trim($warning),
+                ]);
+            } else if (!str_contains($output, '[emerg]')) {
+                $this->command("systemctl reload nginx", true);
             } else {
                 $this->command("cp $file.bak $file", true);
 
@@ -441,8 +477,9 @@ class WebserverController extends Controller
             ]);
         } elseif (str_contains($output, 'Certificate not yet due for renewal')) {
             return response()->json([
-                "status" => "error",
+                "status" => "warning",
                 "message" => "Certificate exists and is not yet due for renewal",
+                "warning" => $output,
             ]);
         } elseif (str_contains($output, 'DNS problem')) {
             return response()->json([
@@ -496,7 +533,20 @@ class WebserverController extends Controller
             // test the new config if it fails revert to the backup
             $output = $this->command("nginx -t", true);
 
-            if (!str_contains($output, '[emerg]')) {
+            if (str_contains($output, '[warn]') && !str_contains($output, '[emerg]')) {
+                $this->command("systemctl reload nginx", true);
+                $this->command("rm $file.bak", true);
+
+                // get the message from nginx return between [warn] and the new line
+                $warning = explode('[warn]', $output)[1];
+                $warning = explode("\n", $warning)[0];
+
+                return response()->json([
+                    "status" => "warning",
+                    "message" => "Nginx test returned a warning, but the config was created",
+                    "warning" => trim($warning),
+                ]);
+            } else if (!str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
                 $this->command("rm $file.bak", true);
             } else {
@@ -555,7 +605,20 @@ class WebserverController extends Controller
             // test the new config if it fails revert to the backup
             $output = $this->command("nginx -t", true);
 
-            if (!str_contains($output, '[emerg]')) {
+            if (str_contains($output, '[warn]') && !str_contains($output, '[emerg]')) {
+                $this->command("systemctl reload nginx", true);
+                $this->command("rm $file.bak", true);
+
+                // get the message from nginx return between [warn] and the new line
+                $warning = explode('[warn]', $output)[1];
+                $warning = explode("\n", $warning)[0];
+
+                return response()->json([
+                    "status" => "warning",
+                    "message" => "Nginx test returned a warning, but the config was created",
+                    "warning" => trim($warning),
+                ]);
+            } else if (!str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
                 $this->command("rm $file.bak", true);
             } else {
