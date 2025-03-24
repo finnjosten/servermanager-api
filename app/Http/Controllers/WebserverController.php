@@ -322,7 +322,6 @@ class WebserverController extends Controller
 
             if (str_contains($output, '[warn]') && !str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
-                $this->command("rm $file.bak", true);
 
                 // get the message from nginx return between [warn] and the new line
                 $warning = explode('[warn]', $output)[1];
@@ -335,7 +334,6 @@ class WebserverController extends Controller
                 ]);
             } else if (!str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
-                $this->command("rm $file.bak", true);
             } else {
                 $this->command("cp $file.bak $file", true);
 
@@ -535,7 +533,6 @@ class WebserverController extends Controller
 
             if (str_contains($output, '[warn]') && !str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
-                $this->command("rm $file.bak", true);
 
                 // get the message from nginx return between [warn] and the new line
                 $warning = explode('[warn]', $output)[1];
@@ -548,7 +545,6 @@ class WebserverController extends Controller
                 ]);
             } else if (!str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
-                $this->command("rm $file.bak", true);
             } else {
                 $this->command("mv $file.bak $file", true);
                 $this->command("rm $disabled_file", true);
@@ -607,7 +603,6 @@ class WebserverController extends Controller
 
             if (str_contains($output, '[warn]') && !str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
-                $this->command("rm $file.bak", true);
 
                 // get the message from nginx return between [warn] and the new line
                 $warning = explode('[warn]', $output)[1];
@@ -620,7 +615,6 @@ class WebserverController extends Controller
                 ]);
             } else if (!str_contains($output, '[emerg]')) {
                 $this->command("systemctl reload nginx", true);
-                $this->command("rm $file.bak", true);
             } else {
                 $this->command("mv $file.bak $file", true);
                 $this->command("rm $disabled_file", true);
