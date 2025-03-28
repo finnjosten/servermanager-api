@@ -19,34 +19,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
 
-            // User info
-            $table->string('role_slug')->default('medewerker');
-            $table->foreign('role_slug')->references('slug')->on('roles');
-
-            $table->string('department_slug')->nullable();
-            $table->foreign('department_slug')->references('slug')->on('departments');
-
-            $table->string('subdepartment_slug')->nullable();
-            $table->foreign('subdepartment_slug')->references('slug')->on('sub_departments');
-
-            $table->foreignId('supervisor_id')->nullable()->constrained('users', 'id');
-
-            // User status
-            $table->boolean('verified')->default(false);
-            $table->boolean('blocked')->default(false);
-
-            // Personal information
-            $table->string('first_name');
-            $table->string('sure_name');
-            $table->string('bsn', 9)->unique();
-            $table->date('date_of_service');
-
-            // Vacation days
-            $table->integer('sick_days')->default(0);
-            $table->integer('vac_days')->default(0);
-            $table->integer('personal_days')->default(0);
-            $table->integer('max_vac_days')->default(366);
-
             $table->rememberToken();
             $table->timestamps();
         });

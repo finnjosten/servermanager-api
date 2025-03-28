@@ -1,6 +1,14 @@
 #!/bin/bash
 
 
+
+
+
+
+
+
+
+
 if [ -f "$domain_dir/.env" ]; then
     cd /var/www/vhost || exit "Directory not found"
     mv "$domain_dir/.env" "/var/www/laravel/${domain}.env"

@@ -100,7 +100,7 @@ class WebappController extends Controller
                 "message" => "Project already exists",
             ], 400);
         } else {
-            mkdir($folder);
+            $this->command('mkdir ' . $folder);
         }
 
         $github = $data['github_link'] ?? null;
