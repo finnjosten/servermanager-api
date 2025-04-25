@@ -94,6 +94,14 @@ class WebappController extends Controller
 
         $folder = '/var/www/vhost/' . $data['project_name'];
 
+        $illegal_chars = ['..', '/', '\\', ':', '*', '?', '"', '<', '>', '|', ' ', '#', '@', '$', '%', '^', '&', '(', ')', '{', '}', '[', ']', ';', "'", '`'];
+        if (preg_match('/[' . preg_quote(implode('', $illegal_chars), '/') . ']/', $folder)) {
+            return response()->json([
+            "status" => "error",
+            "message" => "Invalid project name",
+            ], 400);
+        }
+
         if (is_dir($folder)) {
             return response()->json([
                 "status" => "error",
@@ -107,12 +115,8 @@ class WebappController extends Controller
         $github_is_clone = $data['github_type'] == 'clone' ? true : false;
         $project_name = $data['project_name'];
 
-
-
         // Create the project
-
         try {
-
             switch($data['type']) {
                 case 'laravel':
                     //$output = $this->command('bash ' . storage_path('/scripts/') . 'laravel.sh', true);
@@ -133,8 +137,6 @@ class WebappController extends Controller
                     ], 400);
             }
 
-
-
         } catch (\Exception $e) {
             return response()->json([
                 "status" => "error",
@@ -142,15 +144,7 @@ class WebappController extends Controller
             ], 500);
         }
 
-
-
-
-
-
-
-
         // Create the meta file
-
         $meta = [
             "project_name" => $data['project_name'],
             "public_address" => "http://" . $data['subdomain'] . '.' . $data['domain'],

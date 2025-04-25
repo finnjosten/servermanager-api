@@ -77,7 +77,7 @@ class HardwareController extends Controller
      */
     public function disk($data_only = false) {
 
-        $memory = [
+        $disk = [
             'size' => $this->command("lsblk -b -o NAME,SIZE | grep '^sda' | awk '{print $2/1024/1024/1024 \" GB\"}'", true) ?? null,
             'buffer_size' => $this->command("sudo hdparm -I /dev/sda | grep 'Buffer size' || echo 'Unknown'", true) ?? null,
             'type' => $this->disk_type ?? null,
@@ -85,14 +85,14 @@ class HardwareController extends Controller
             'mount_point' => $this->command("lsblk -o NAME,MOUNTPOINT | grep 'sda1'", true) ?? null,
         ];
 
-        $memory['mount_point'] =  explode("  ",explode("\n", $memory['mount_point'])[0])[1];
+        $disk['mount_point'] =  explode("  ",explode("\n", $disk['mount_point'])[0])[1];
 
         if ($data_only) {
-            return $memory;
+            return $disk;
         }
         return response()->json([
             "status" => "success",
-            "data" => $memory,
+            "data" => $disk,
         ]);
     }
 
